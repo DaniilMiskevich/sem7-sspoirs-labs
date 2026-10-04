@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Reconstruct full A and B from the same seeds, check rank files match A @ B."""
 import sys
 from pathlib import Path
