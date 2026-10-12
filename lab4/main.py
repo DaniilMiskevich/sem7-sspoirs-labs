@@ -152,8 +152,10 @@ def run_group_phase(comm, args, sizes, bounds):
     b_strip = np.ascontiguousarray(np.load(args.data_dir / "b_data.npy", mmap_mode="r")[:, rank * rows:(rank + 1) * rows])
 
     start = time.perf_counter()
-    b_strips = np.empty((group_size, args.size, rows))
-    group_comm.Allgather(b_strip, b_strips)
+    count = args.size * rows
+    b_strips = np.empty((group_size * count,))
+    group_comm.Allgather((b_strip, count, MPI.DOUBLE), (b_strips, count, MPI.DOUBLE))
+    b_strips = b_strips.reshape(group_size, args.size, rows)
     b_group = b_strips.transpose(1, 0, 2).reshape(args.size, group_size * rows)
     c_block = a_block @ b_group
     local_time = time.perf_counter() - start
