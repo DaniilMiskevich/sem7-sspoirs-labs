@@ -1,0 +1,10 @@
+{
+    "tasks": {
+        "run": {
+            "cmd": "mpirun -n $(nproc) ./main.py --size 3000"
+        },
+        "run-remote": {
+            "cmd": "mpirun --hostfile hosts.txt -n 9 ~/Projects/sspoirs/main.py --size 900"
+        }
+    }
+}
