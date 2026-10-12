@@ -2,4 +2,6 @@
 docker run --rm                 \
     --network host              \
     -v .:/workdir               \
+    --cap-add CAP_SYS_ADMIN     \
+    --device /dev/fuse          \
     -it "$(docker build -q .)"

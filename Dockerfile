@@ -1,7 +1,7 @@
 FROM alpine:3.24.2
 
 RUN apk add --no-cache                      \
-    openssh                                 \
+    openssh sshfs                           \
     openmpi openmpi-dev                     \
     python3 py3-pip py3-mpi4py py3-numpy 
 
