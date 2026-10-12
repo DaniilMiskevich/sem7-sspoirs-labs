@@ -46,7 +46,7 @@
 
 ```bash
 # минимум 3 процесса; размер подбирается под ~10 c (по умолчанию 3000)
-mpirun -n $(nproc) python3 main.py --size 3000
+mpirun -n $(nproc) ./main.py --size 3000
 ```
 Флаги:
 - `--size N` — размер `N x N` (должен делиться на число rank).
@@ -83,7 +83,7 @@ mpirun -n $(nproc) python3 main.py --size 3000
 
 4. **Запуск:**
    ```bash
-   mpirun --hostfile hosts.txt -n 8 python3 main.py --size 3000
+   mpirun --hostfile hosts.txt -n 8 ./main.py --size 3000
    ```
    *(Общее число процессов `-n` должно совпадать с суммой слотов в `hosts.txt`, а `--size` должен делиться на `-n`).*
 
