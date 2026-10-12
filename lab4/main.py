@@ -127,13 +127,15 @@ def make_group_partition(nprocs, ngroups, seed):
     return sizes, bounds
 
 
-def ensure_input_files(data_dir, size, seed):
-    """Rank 0 creates the shared input files once; they stay on the network-readable path."""
-    data_dir.mkdir(parents=True, exist_ok=True)
-    rng = np.random.default_rng(seed)
-    for name in ("a_data.npy", "b_data.npy"):
-        if not (data_dir / name).exists():
-            np.save(data_dir / name, rng.standard_normal((size, size)))
+def ensure_input_files(rank, data_dir, size, seed):
+    """Rank 0 creates the shared input files once; everyone else waits at the barrier."""
+    if rank == 0:
+        data_dir.mkdir(parents=True, exist_ok=True)
+        rng = np.random.default_rng(seed)
+        for name in ("a_data.npy", "b_data.npy"):
+            path = data_dir / name
+            if not path.exists() or np.load(path).shape != (size, size):
+                np.save(path, rng.standard_normal((size, size)))
 
 
 def run_group_phase(comm, args, sizes, bounds):
@@ -144,7 +146,7 @@ def run_group_phase(comm, args, sizes, bounds):
     group_comm = comm.Split(color=group_id, key=rank)
     group_size = group_comm.Get_size()
 
-    ensure_input_files(args.data_dir, args.size, args.seed)
+    ensure_input_files(rank, args.data_dir, args.size, args.seed)
     comm.Barrier()
 
     rows = args.size // nprocs
