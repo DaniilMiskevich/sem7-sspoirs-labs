@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Reconstruct full A and B from the same seeds, check rank files match A @ B."""
 import sys
 from pathlib import Path
@@ -17,11 +16,11 @@ def build_full_matrices(size, nprocs, seed):
 
 
 def main():
-    size, nprocs, seed, out_dir = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), Path(sys.argv[4])
+    size, nprocs, seed = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
     a_full, b_full = build_full_matrices(size, nprocs, seed)
     expected = a_full @ b_full
     rows = size // nprocs
-    c_full = np.concatenate([np.load(out_dir / f"rank_{r}.npy") for r in range(nprocs)])
+    c_full = np.concatenate([np.load(f"out/rank_{r}.npy") for r in range(nprocs)])
     max_err = np.max(np.abs(c_full - expected))
     print(f"max_abs_error={max_err:.3e}")
     sys.exit(0 if max_err < 1e-9 else 1)
