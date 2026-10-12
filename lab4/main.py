@@ -150,8 +150,11 @@ def run_group_phase(comm, args, sizes, bounds):
     comm.Barrier()
 
     rows = args.size // nprocs
-    a_block = np.load(args.data_dir / "a_data.npy", mmap_mode="r")[rank * rows:(rank + 1) * rows]
-    b_strip = np.ascontiguousarray(np.load(args.data_dir / "b_data.npy", mmap_mode="r")[:, rank * rows:(rank + 1) * rows])
+    try:
+        a_block = np.ascontiguousarray(np.load(args.data_dir / "a_data.npy", mmap_mode="r")[rank * rows:(rank + 1) * rows])
+        b_strip = np.ascontiguousarray(np.load(args.data_dir / "b_data.npy", mmap_mode="r")[:, rank * rows:(rank + 1) * rows])
+    except FileNotFoundError:
+        raise RuntimeError(f"{args.data_dir} is not visible from all nodes — it must be shared network storage (see README)")
 
     start = time.perf_counter()
     count = args.size * rows
@@ -179,6 +182,7 @@ def run_group_phase(comm, args, sizes, bounds):
 
 def main():
     args = parse_args()
+    args.data_dir = Path(args.data_dir).expanduser().resolve()
     comm = COMM_WORLD
     rank, nprocs = comm.Get_rank(), comm.Get_size()
     assert nprocs >= 2, f"need at least 2 MPI ranks, got {nprocs}"
