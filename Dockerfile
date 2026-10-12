@@ -5,7 +5,7 @@ RUN apk add --no-cache                      \
     openmpi openmpi-dev                     \
     python3 py3-pip py3-mpi4py py3-numpy 
 
-RUN ssh-keygen -f ~/.ssh/id_ed25519 -N '' &&\
+RUN ssh-keygen -A && ssh-keygen -f ~/.ssh/id_ed25519 -N '' &&\
     sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config &&\
     echo "root:root" | chpasswd
 
