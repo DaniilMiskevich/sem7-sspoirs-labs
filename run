@@ -1,0 +1,5 @@
+#!/bin/sh
+docker run --rm                 \
+    --network host              \
+    -v .:/workdir               \
+    -it "$(docker build -q .)"

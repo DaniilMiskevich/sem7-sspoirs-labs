@@ -1,0 +1,7 @@
+services:
+  main:
+    build: ..
+    network_mode: host
+    volumes:
+      - ./main.py:/main.py
+      - ./hosts.txt:/hosts.txt
